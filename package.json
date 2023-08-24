@@ -1,19 +1,21 @@
 {
   "name": "vite-plugin-civetman",
-  "description": "vite plugin for civetman (civet + watch compile)",
   "version": "1.0.1",
-  "module": "dist/index.js",
+  "private": false,
+  "description": "vite plugin for civetman (civet + watch compile)",
+  "keywords": [
+    "civet",
+    "civetman",
+    "vite",
+    "plugin"
+  ],
+  "homepage": "https://github.com/krist7599555/vite-plugin-civetman",
+  "bugs": {
+    "url": "https://github.com/krist7599555/vite-plugin-civetman/issues",
+    "email": "krist7599555@gmail.com"
+  },
+  "repository": "https://github.com/krist7599555/vite-plugin-civetman",
   "type": "module",
-  "homepage": "",
-  "scripts": {
-    "build": "bunx --bun tsup"
-  },
-  "devDependencies": {
-    "@types/node": "^20.5.4",
-    "bun-types": "latest",
-    "tsup": "^7.2.0",
-    "typescript": "5"
-  },
   "exports": {
     ".": {
       "import": "./dist/index.js",
@@ -24,7 +26,16 @@
     "dist/*",
     "*"
   ],
+  "scripts": {
+    "build": "bunx --bun tsup"
+  },
   "dependencies": {
     "vite": "^4.4.9"
+  },
+  "devDependencies": {
+    "@types/node": "^20.5.4",
+    "bun-types": "latest",
+    "tsup": "^7.2.0",
+    "typescript": "5"
   }
 }

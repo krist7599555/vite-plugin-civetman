@@ -1,5 +1,7 @@
 # vite-plugin-civetman
 
+[![npm vite-plugin-civetman](https://img.shields.io/npm/v/vite-plugin-civetman)](https://www.npmjs.com/package/vite-plugin-civetman)
+
 <!-- markdownlint-disable -->
 <img style="margin: 30px auto; display: flex; border-radius: 50px" width="100"  src="https://user-images.githubusercontent.com/18894/184558519-b675a903-7490-43ba-883e-0d8addacd4b9.png">
 

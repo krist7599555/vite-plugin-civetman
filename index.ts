@@ -6,19 +6,29 @@ import {
 } from "node:child_process";
 
 
-function spawn_civetman_cli(command: "dev" | "build", opt: SpawnOptions = {}) {
+/**!
+ * Helper to run civetman in another process
+ * @param {"dev" | "build"} command
+ * @param {SpawnOptions} opt 
+ * @returns {ChildProcess} 
+ */
+function runCivetmanCli(command: "dev" | "build", opt: SpawnOptions = {}): ChildProcess {
   const program = fork("./node_modules/civetman/dist/index.js", [command], {
     stdio: ["inherit", "inherit", "inherit", "ipc"],
-    env: { ...process.env, PATH: process.env.PATH, SHELL: process.env.SHELL, FORCE_COLOR: "1" },
+    env: { PATH: process.env.PATH, FORCE_COLOR: "1" },
     cwd: process.cwd(),
     ...opt,
   });
   return program;
 }
 
-export function civetman() {
+
+/**
+ * Vite Plugin Civetman (compile .civet to .ts)
+ * @returns {Plugin}
+ */
+export function civetman(): Plugin {
   let config: ResolvedConfig;
-  let process_watch: ChildProcess | undefined = undefined;
   return {
     name: "vite-plugin-civetman" as const,
     configResolved(resolvedConfig: ResolvedConfig) {
@@ -27,17 +37,37 @@ export function civetman() {
     },
     async buildStart() {
       if (config.command == "build") {
-        const process = spawn_civetman_cli("build");
-        await new Promise<void>((resolve) => {
-          process.on("close", () => resolve());
-          process.on("exit", () => resolve());
+        const process = runCivetmanCli("build");
+        await new Promise<void>((resolve, reject) => {
+          process.on("exit", (code ) => {
+            if (code == 0) {
+              resolve()
+            } else {
+              reject(new Error(`Civet Compile Error`))
+            }
+          });
         });
       }
     },
-    async configureServer(_server: ViteDevServer) {
+    async configureServer(server: ViteDevServer) {
       if (config.command == "serve") {
-        process_watch = spawn_civetman_cli("dev");
+        let process: ChildProcess | undefined = undefined;
+        function tryCompileCivetmanWatch() {
+          if (process) return;
+          process = runCivetmanCli("dev");
+          process.on("exit", code => {
+            console.error("CIVETMAN compile error is exit code=", code)
+            process = undefined
+          })
+        }
+        tryCompileCivetmanWatch();
+        server.watcher.add('**/*.civet');
+        server.watcher.on("change", path => {
+          if (path.endsWith(".civet")) {
+            tryCompileCivetmanWatch();
+          }
+        })
       }
     },
-  } satisfies Plugin;
+  }
 }

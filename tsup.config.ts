@@ -6,5 +6,13 @@ export default defineConfig({
 	outDir: "./dist",
 	entry: ["./index.ts"],
 	clean: true,
-	dts: true
+	dts: true,
+	minify: false,
+	sourcemap: true,
+	shims: false,
+	outExtension() {
+		return {
+			js: '.mjs'
+		}
+	}
 })

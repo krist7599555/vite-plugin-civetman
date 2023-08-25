@@ -19,6 +19,9 @@ function runCivetmanCli(command: "dev" | "build", opt: SpawnOptions = {}): Child
     cwd: process.cwd(),
     ...opt,
   });
+  globalThis.process.on("exit", () => {
+    program.kill("SIGTERM")
+  })
   return program;
 }
 
